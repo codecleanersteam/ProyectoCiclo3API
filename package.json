@@ -1,0 +1,18 @@
+{
+  "name": "ProyectoCiclo3API",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/codecleanersteam/ProyectoCiclo3API.git",
+  "author": "Mauricio Cendales <malexcdl@hotmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon servidor.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  }
+}
