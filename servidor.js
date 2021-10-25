@@ -1,19 +1,10 @@
 // const express = require("express");
 import Express, { response } from "express";
-import { MongoClient, ObjectId } from "mongodb";
 import Cors from "cors";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
+import { dBConnect, getDB } from "./db/database.js";
 
-dotenv.config({path: "./.env"})
-
-const stringinfoBD =process.env.database_url;
-
-const client = new MongoClient(stringinfoBD, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-let infoBD;
+dotenv.config({ path: "./.env" });
 
 const app = Express();
 app.use(Express.json());
@@ -21,7 +12,8 @@ app.use(Cors());
 
 app.get("/products", (request, response) => {
   console.log("Alguien hizo una petición en la ruta /productos");
-  infoBD
+  const infoDB = getDB();
+  infoDB
     .collection("producto")
     .find({})
     .limit(50)
@@ -65,7 +57,8 @@ app.post("/products/add", (request, response) => {
       Object.keys(datosProducto).includes("valorunitario") &&
       Object.keys(datosProducto).includes("estado")
     ) {
-      infoBD.collection("producto").insertOne(datosProducto, (err, result) => {
+      const infoDB = getDB();
+      infoDB.collection("producto").insertOne(datosProducto, (err, result) => {
         if (err) {
           console.error(err);
           response.sendStatus(500);
@@ -83,59 +76,49 @@ app.post("/products/add", (request, response) => {
 });
 
 app.patch("/products/modify", (request, response) => {
-    const edit = request.body;
-    console.log(edit);
-    const filtroProducto = { _id: new ObjectId(edit.id) };
-    delete edit.id;
-    const operation = {
-      $set: edit,
-    };
-    infoBD
-      .collection("producto")
-      .findOneAndUpdate(
-        filtroProducto,
-        operation,
-        { upsert: true, returnOriginal: true },
-        (err, result) => {
-          if (err) {
-            console.error("Error actualizando el producto:", err);
-            response.sendStatus(500);
-          } else {
-            console.log("Producto actualizado con exito");
-            response.sendStatus(200);
-          }
-        }
-      );
-  });
-
-
-  app.delete("/products/delete", (request, response) => {
-    const filtroProducto = { _id: new ObjectId(request.body.id) };
-    infoBD
-      .collection("producto")
-      .deleteOne(filtroProducto, (err, result) => {
+  const edit = request.body;
+  console.log(edit);
+  const filtroProducto = { _id: new ObjectId(edit.id) };
+  delete edit.id;
+  const operation = {
+    $set: edit,
+  };
+  const infoDB = getDB();
+  infoDB
+    .collection("producto")
+    .findOneAndUpdate(
+      filtroProducto,
+      operation,
+      { upsert: true, returnOriginal: true },
+      (err, result) => {
         if (err) {
-          console.error(err);
+          console.error("Error actualizando el producto:", err);
           response.sendStatus(500);
         } else {
+          console.log("Producto actualizado con exito");
           response.sendStatus(200);
         }
-      });
-  });
+      }
+    );
+});
 
+app.delete("/products/delete", (request, response) => {
+  const filtroProducto = { _id: new ObjectId(request.body.id) };
+  const infoDB = getDB();
+  infoDB.collection("producto").deleteOne(filtroProducto, (err, result) => {
+    if (err) {
+      console.error(err);
+      response.sendStatus(500);
+    } else {
+      response.sendStatus(200);
+    }
+  });
+});
 
 const main = () => {
-  client.connect((err, db) => {
-    if (err) {
-      console.error("Error al conectarse a la base de datos");
-      return "Error";
-    }
-    infoBD = db.db("proyectociclo3");
-    console.log("Conexión Exitosa");
-    return app.listen(process.env.port, () => {
-      console.log(`Escuchando en el puerto ${process.env.port}`);
-    });
+  return app.listen(process.env.port, () => {
+    console.log(`Escuchando en el puerto ${process.env.port}`);
   });
 };
 
-main();
+dBConnect(main);
