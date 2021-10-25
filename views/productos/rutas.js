@@ -1,5 +1,5 @@
 import Express from "express";
-import { queryAllProducts, addProduct } from "../../controllers/productos/controlador.js";
+import { queryAllProducts, addProduct, modifyProduct } from "../../controllers/productos/controlador.js";
 import { getDB } from "../../db/database.js";
 
 const rutasProducto = Express.Router();
@@ -25,30 +25,7 @@ rutasProducto.route("/products/add").post((request, response) => {
 });
 
 rutasProducto.route("/products/modify").patch((request, response) => {
-  const edit = request.body;
-  console.log(edit);
-  const filtroProducto = { _id: new ObjectId(edit.id) };
-  delete edit.id;
-  const operation = {
-    $set: edit,
-  };
-  const infoDB = getDB();
-  infoDB
-    .collection("producto")
-    .findOneAndUpdate(
-      filtroProducto,
-      operation,
-      { upsert: true, returnOriginal: true },
-      (err, result) => {
-        if (err) {
-          console.error("Error actualizando el producto:", err);
-          response.sendStatus(500);
-        } else {
-          console.log("Producto actualizado con exito");
-          response.sendStatus(200);
-        }
-      }
-    );
+    modifyProduct(request.body, genericCallback(response))
 });
 
 rutasProducto.route("/products/delete").delete((request, response) => {
