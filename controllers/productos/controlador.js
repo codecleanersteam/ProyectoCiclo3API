@@ -6,6 +6,11 @@ const queryAllProducts = async (callback) => {
   await infoDB.collection("producto").find().limit(50).toArray(callback);
 };
 
+const queryProduct = async (id, callback) => {
+  const infoDB = getDB();
+  await infoDB.collection("producto").findOne({ _id: new ObjectId(id)}, callback);
+};
+
 const addProduct = async (datosProducto, callback) => {
   if (
     Object.keys(datosProducto).includes("nombre") &&
@@ -21,10 +26,8 @@ const addProduct = async (datosProducto, callback) => {
   }
 };
 
-const modifyProduct = async (edit, callback) => {
-  console.log(edit);
-  const filtroProducto = { _id: new ObjectId(edit.id) };
-  delete edit.id;
+const modifyProduct = async (id, edit, callback) => {
+  const filtroProducto = { _id: new ObjectId(id) };
   const operation = {
     $set: edit,
   };
@@ -45,4 +48,10 @@ const deleteProduct = async (id, callback) => {
   await infoDB.collection("producto").deleteOne(filtroProducto, callback);
 };
 
-export { queryAllProducts, addProduct, modifyProduct, deleteProduct };
+export {
+  queryAllProducts,
+  addProduct,
+  modifyProduct,
+  deleteProduct,
+  queryProduct,
+};
