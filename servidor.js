@@ -2,9 +2,11 @@
 import Express, { response } from "express";
 import { MongoClient, ObjectId } from "mongodb";
 import Cors from "cors";
+import dotenv from "dotenv"
 
-const stringinfoBD =
-  "mongodb+srv://mauricio:UdeA2021*@proyectociclo3.0nqiz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+dotenv.config({path: "./.env"})
+
+const stringinfoBD =process.env.database_url;
 
 const client = new MongoClient(stringinfoBD, {
   useNewUrlParser: true,
@@ -130,8 +132,8 @@ const main = () => {
     }
     infoBD = db.db("proyectociclo3");
     console.log("Conexión Exitosa");
-    return app.listen(3001, () => {
-      console.log("Escuchando en el puerto 3001");
+    return app.listen(process.env.port, () => {
+      console.log(`Escuchando en el puerto ${process.env.port}`);
     });
   });
 };
