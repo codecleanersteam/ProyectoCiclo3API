@@ -1,6 +1,5 @@
 import Express from "express";
-import { queryAllProducts, addProduct, modifyProduct } from "../../controllers/productos/controlador.js";
-import { getDB } from "../../db/database.js";
+import { queryAllProducts, addProduct, modifyProduct, deleteProduct } from "../../controllers/productos/controlador.js";
 
 const rutasProducto = Express.Router();
 
@@ -29,16 +28,7 @@ rutasProducto.route("/products/modify").patch((request, response) => {
 });
 
 rutasProducto.route("/products/delete").delete((request, response) => {
-  const filtroProducto = { _id: new ObjectId(request.body.id) };
-  const infoDB = getDB();
-  infoDB.collection("producto").deleteOne(filtroProducto, (err, result) => {
-    if (err) {
-      console.error(err);
-      response.sendStatus(500);
-    } else {
-      response.sendStatus(200);
-    }
-  });
+  deleteProduct(request.body.id, genericCallback(response))
 });
 
 export default rutasProducto;

@@ -39,4 +39,10 @@ const modifyProduct = async (edit, callback) => {
     );
 };
 
-export { queryAllProducts, addProduct, modifyProduct };
+const deleteProduct = async (id, callback) => {
+  const filtroProducto = { _id: new ObjectId(id) };
+  const infoDB = getDB();
+  await infoDB.collection("producto").deleteOne(filtroProducto, callback);
+};
+
+export { queryAllProducts, addProduct, modifyProduct, deleteProduct };
