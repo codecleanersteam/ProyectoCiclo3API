@@ -5,7 +5,9 @@ const rutasProducto = Express.Router();
 
 const genericCallback = (response) => (err, result) => {
   if (err) {
-    response.status(500).send("Error de comunicación con la base de datos");
+    console.log("error", err)
+    // response.status(500).send("Error de comunicación con la base de datos");
+    response.status(500).json({error: err})
   } else {
     response.json(result);
   }
