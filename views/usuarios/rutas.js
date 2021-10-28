@@ -1,5 +1,5 @@
 import Express from "express";
-import { queryAllUsers, addUser, modifyUser, deleteUser, queryUser } from "../../controllers/usuarios/controlador.js";
+import { queryAllUsers, addUser, modifyUser, deleteUser, queryUser, consultarOCrearUsuario } from "../../controllers/usuarios/controlador.js";
 
 const rutasUsuario = Express.Router();
 
@@ -20,6 +20,13 @@ rutasUsuario.route("/users").get((request, response) => {
 
 rutasUsuario.route("/users").post((request, response) => {
     addUser(request.body, genericCallback(response))
+});
+
+//Para el crud de usuarios
+rutasUsuario.route("/users/self").get((request, response) => {
+  console.log("Alguien hizo una petición GET en la ruta /self");
+  consultarOCrearUsuario(request,genericCallback(response))
+  // queryUser(request.params.id, genericCallback(response));
 });
 
 rutasUsuario.route("/users/:id").patch((request, response) => {

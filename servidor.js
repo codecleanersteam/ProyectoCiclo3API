@@ -28,7 +28,7 @@ var jwtCheck = jwt({
   algorithms: ["RS256"],
 });
 
-
+//4. y 5. Enviarle el token a Auth0 para que devuelva si es válido o no.
 app.use(jwtCheck);
 
 
